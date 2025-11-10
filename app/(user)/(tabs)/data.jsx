@@ -125,28 +125,28 @@ const DataScreen = () => {
         focusedDataPointRadius={8}
         focusedDataPointColor={color}
         showValuesAsDataPointsText
-        textColor1="#222"
+        textColor1="#fff"
         textShiftY={30}
         textShiftX={-5}
         textFontSize={12}
         spacing={75}
         onPress={(item) => handlePointPress(item, title)}
         xAxisLabelTextStyle={{
-          color: '#666',
+          color: '#fff',
           fontSize: 10,
           textAlign: 'center',
           fontFamily: 'Poppins-Regular',
         }}
-        yAxisTextStyle={{ color: '#666', fontSize: 10, fontFamily: 'Poppins-SemiBold' }}
+        yAxisTextStyle={{ color: '#fff', fontSize: 10, fontFamily: 'Poppins-SemiBold' }}
         noOfSections={5}
       />
     </View>
   );
 
   const ranges = [
-    { label: '24h', value: '24h' },
-    { label: '7d', value: '7d' },
-    { label: '30d', value: '30d' },
+    { label: '1D', value: '24h' },
+    { label: '1W', value: '7d' },
+    { label: '1M', value: '30d' },
     { label: 'Custom', value: 'custom' },
   ];
 
@@ -239,7 +239,7 @@ const DataScreen = () => {
         )}
 
         {loading ? (
-          <ActivityIndicator size="large" color="#000" style={{ marginTop: 40 }} />
+          <ActivityIndicator size="large" color="#fff" style={{ marginTop: 40 }} />
         ) : filteredData.length === 0 ? (
           <Text style={styles.noData}>No data found</Text>
         ) : (
@@ -282,12 +282,13 @@ const DataScreen = () => {
 export default DataScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: 'white' },
+  container: { flex: 1, backgroundColor: '#1a1a1a', },
   scrollContent: { alignItems: 'center', paddingTop: 30, paddingBottom: 100 },
   title: {
-    fontSize: 22,
-    fontFamily: 'Poppins-Bold',
+    fontSize: 18,
+    fontFamily: 'Poppins-SemiBold',
     marginBottom: 10,
+    color: '#fff'
   },
   rangeContainer: {
     flexDirection: 'row',
@@ -301,24 +302,26 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: '#ccc',
+    backgroundColor: '#232227',
     marginHorizontal: 6,
     marginBottom: 6,
   },
   activeRangeButton: {
-    backgroundColor: '#3b82f6',
-    borderColor: '#3b82f6',
+    backgroundColor: '#1654ff',
+    borderColor: '#1654ff',
   },
   rangeText: {
     fontFamily: 'Poppins-SemiBold',
-    color: '#444',
-    fontSize: 12,
+    color: '#fff',
+    fontSize: 14,
+    marginTop: 2,
   },
   activeRangeText: { color: '#fff' },
   customRangeWrapper: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#242328',
     borderRadius: 14,
     paddingVertical: 10,
     paddingHorizontal: 14,
@@ -345,10 +348,11 @@ const styles = StyleSheet.create({
   dateTextModern: { fontFamily: 'Poppins-SemiBold', fontSize: 13, color: '#111' },
   chartContainer: { marginBottom: 40, alignItems: 'center' },
   chartTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
-    marginBottom: 10,
-    fontFamily: 'Poppins-SemiBold',
+    marginTop: 10,
+    fontFamily: 'Poppins-Light',
+    color: '#fff'
   },
   noData: {
     fontSize: 16,

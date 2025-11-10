@@ -130,121 +130,208 @@ const ThresholdScreen = () => {
               {/* 1st Container */}
               <View style={styles.cardContentContainer}>
                 <View style={styles.sensorCard}>
-                  <Text style={styles.cardTitle}>TEMPERATURE</Text>
+                  {/* <Text style={styles.cardTitle}>TEMPERATURE</Text> */}
                   <View style={styles.sensorReadingCard}>
-                    <Image 
+                    {/* <Image 
                       source={images.tempIcon}
                       style={styles.sensorIcon}
                       resizeMode='contain'
-                    />
-                    <View>
-                      <Text numberOfLines={1} adjustsFontSizeToFit style={styles.sensorValueText}>{temperature !== null ? `${temperature}° C` : '...'}</Text>
-                      <Text style={[
-                          styles.sensorStatusText,
-                          {
-                            color:
-                              temperature === null || tempMin === null || tempMax === null
-                                ? 'gray'
-                                : temperature > tempMax
-                                ? 'red'
-                                : temperature < tempMin
-                                ? 'lightblue'
-                                : 'green',
+                    /> */}
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
+                      <View style={{ padding: 7, borderRadius: 100, backgroundColor: "#ffffff2e", alignSelf: "flex-start"  }}>
+                        <Ionicons name="thermometer-outline" size={20} color="#fff" />
+                      </View>
+                      <View style={[
+                          { 
+                            padding: 7, 
+                            borderRadius: 100, 
+                            backgroundColor: "#ffffff2e", 
+                            alignSelf: "flex-start"  
                           },
+                          {
+                            backgroundColor:
+                              temperature === null || tempMin === null || tempMax === null
+                                ? "#ffffff2e"
+                                : temperature > tempMax
+                                ? "#ff4d4d30" 
+                                : temperature < tempMin
+                                ? "#4db8ff30"
+                                : "#4dff4d30",
+                          }
                         ]}
                       >
-                        {temperature === null || tempMin === null || tempMax === null
-                        ? 'Reading...'
-                        : temperature > tempMax
-                        ? 'High Temperature'
-                        : temperature < tempMin
-                        ? 'Low Temperature'
-                        : 'Normal Temperature'}
-                      </Text>
+                        <Text numberOfLines={1} style={[
+                            styles.sensorStatusText,
+                            {
+                              color:
+                                temperature === null || tempMin === null || tempMax === null
+                                  ? 'gray'
+                                  : temperature > tempMax
+                                  ? 'red'
+                                  : temperature < tempMin
+                                  ? 'lightblue'
+                                  : 'green',
+                            },
+                          ]}
+                        >
+                          {temperature === null || tempMin === null || tempMax === null
+                          ? 'Reading...'
+                          : temperature > tempMax
+                          ? 'High Temp'
+                          : temperature < tempMin
+                          ? 'Low Temp'
+                          : 'Normal Temp'}
+                        </Text>
+                      </View>
+                    </View>
+                    <View>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={styles.sensorValueText}>
+                      {temperature !== null ? (
+                        <>
+                          {temperature}
+                          <Text style={{ color: '#6b6b6b', fontFamily: 'Poppins-Regular', fontSize: 20 }}> °C</Text>
+                        </>
+                      ) : (
+                        '...'
+                      )}
+                    </Text>
+                    <Text numberOfLines={1} style={{ color: "#fff", fontFamily: 'Poppins-Light', textAlign: 'center', marginTop: -10 }}>Temperature</Text>
                     </View>
                   </View>
                 </View>
 
                 <View style={styles.sensorCard}>
-                  <Text style={styles.cardTitle}>PRESSURE</Text>
+                  {/* <Text style={styles.cardTitle}>PRESSURE</Text> */}
                   <View style={styles.sensorReadingCard}>
-                    <Image 
-                      source={images.humidIcon}
-                      style={styles.sensorIcon}
-                      resizeMode='contain'
-                    />
-                    <View>
-                      <Text numberOfLines={1} adjustsFontSizeToFit style={styles.sensorValueText}>{pressure !== null ? `${pressure}%` : '...'}</Text>
-                      <Text style={[
-                          styles.sensorStatusText,
-                          {
-                            color:
-                            pressure === null || pressureMin === null || pressureMax === null
-                                ? 'gray' 
-                                : pressure > pressureMax
-                                ? 'red'
-                                : pressure < pressureMin
-                                ? 'lightblue'
-                                : 'green',
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
+                      <View style={{ padding: 7, borderRadius: 100, backgroundColor: "#ffffff2e", alignSelf: "flex-start"  }}>
+                        <Ionicons name="speedometer-outline" size={20} color="#fff" />
+                      </View>
+                      <View style={[
+                          { 
+                            padding: 7, 
+                            borderRadius: 100, 
+                            backgroundColor: "#ffffff2e", 
+                            alignSelf: "flex-start"  
                           },
+                          {
+                            backgroundColor:
+                              pressure === null || pressureMin === null || pressureMax === null
+                                ? "#ffffff2e"
+                                : pressure > pressureMax
+                                ? "#ff4d4d30" 
+                                : pressure < pressureMin
+                                ? "#4db8ff30"
+                                : "#4dff4d30",
+                          }
                         ]}
                       >
-                        {pressure === null || pressureMin === null || pressureMax === null
+                        <Text numberOfLines={1} style={[
+                            styles.sensorStatusText,
+                            {
+                              color:
+                                pressure === null || pressureMin === null || pressureMax === null
+                                  ? 'gray'
+                                  : pressure > pressureMax
+                                  ? 'red'
+                                  : pressure < pressureMin
+                                  ? 'lightblue'
+                                  : 'green',
+                            },
+                          ]}
+                        >
+                          {pressure === null || pressureMin === null || pressureMax === null
                           ? 'Reading...'
                           : pressure > pressureMax
                           ? 'High Pressure'
                           : pressure < pressureMin
                           ? 'Low Pressure'
                           : 'Good Condition'}
+                        </Text>
+                      </View>
+                    </View>
+                    <View>
+                      <Text numberOfLines={1} adjustsFontSizeToFit style={styles.sensorValueText}>
+                        {pressure !== null ? (
+                          <>
+                            {pressure}
+                            <Text style={{ color: '#6b6b6b', fontFamily: 'Poppins-Regular', fontSize: 20 }}> %</Text>
+                          </>
+                        ) : (
+                          '...'
+                        )}
                       </Text>
+                      <Text numberOfLines={1} style={{ color: "#fff", fontFamily: 'Poppins-Light', textAlign: 'center', marginTop: -10 }}>Pressure</Text>
                     </View>
                   </View>
                 </View>
 
               </View>
-
-              {/* 2nd Container */}
+              
               <View style={styles.fullWidthCardContainer}>
-                <Text style={styles.cardTitle}>GAS STATUS</Text>
-
-                <View style={[styles.sensorReadingCard, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }]}>
-                  {gasStatus === 'On Process' && (
-                    <MaterialCommunityIcons name="cog-sync" size={50} color="orange" />
-                  )}
-                  {gasStatus === 'Ready to Harvest' && (
-                    <MaterialCommunityIcons name="check-decagram" size={50} color="green" />
-                  )}
-                  {!gasStatus && (
-                    <MaterialCommunityIcons name="timer-sand" size={50} color="gray" />
-                  )}
-
-                  <View>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={styles.sensorValueText}>
-                      {gasStatus ? gasStatus : 'Reading...'}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.sensorStatusText,
-                        {
-                          color:
-                            gasStatus === 'On Process'
-                              ? 'orange'
-                              : gasStatus === 'Ready to Harvest'
-                              ? 'green'
-                              : 'gray',
-                        },
-                      ]}
-                    >
-                      {gasStatus === 'On Process'
-                        ? 'Currently Processing'
-                        : gasStatus === 'Ready to Harvest'
-                        ? 'Ready to Harvest'
-                        : 'Waiting for Data'}
-                    </Text>
+                <View>
+                  {/* <Text style={styles.cardTitle}>PRESSURE</Text> */}
+                  <View style={styles.sensorReadingCard}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
+                      <View style={{ padding: 7, borderRadius: 100, backgroundColor: "#ffffff2e", alignSelf: "flex-start"  }}>
+                        {gasStatus === 'On Process' && (
+                          <MaterialCommunityIcons name="cog-sync" size={20} color="#fff" />
+                        )}
+                        {gasStatus === 'Ready to Harvest' && (
+                          <MaterialCommunityIcons name="check-decagram" size={20} color="#fff" />
+                        )}
+                        {!gasStatus && (
+                          <MaterialCommunityIcons name="timer-sand" size={20} color="#fff" />
+                        )}
+                      </View>
+                      <View style={[
+                          { 
+                            padding: 7, 
+                            borderRadius: 100, 
+                            backgroundColor: "#ffffff2e", 
+                            alignSelf: "flex-start"  
+                          },
+                          {
+                            backgroundColor:
+                              pressure === null || pressureMin === null || pressureMax === null
+                                ? "#ffffff2e"
+                                : pressure > pressureMax
+                                ? "#ff4d4d30" 
+                                : pressure < pressureMin
+                                ? "#4db8ff30"
+                                : "#4dff4d30",
+                          }
+                        ]}
+                      >
+                        <Text numberOfLines={1} style={[
+                            styles.sensorStatusText,
+                            {
+                              color:
+                              gasStatus === 'On Process'
+                                ? 'orange'
+                                : gasStatus === 'Ready to Harvest'
+                                ? 'green'
+                                : 'gray',
+                            },
+                          ]}
+                        >
+                          {gasStatus === 'On Process'
+                          ? 'Currently Processing'
+                          : gasStatus === 'Ready to Harvest'
+                          ? 'Ready to Harvest'
+                          : 'Waiting for Data'}
+                        </Text>
+                      </View>
+                    </View>
+                    <View>
+                      <Text numberOfLines={1} adjustsFontSizeToFit style={styles.sensorValueText}>
+                        {gasStatus ? gasStatus : 'Reading...'}
+                      </Text>
+                      <Text numberOfLines={1} style={{ color: "#fff", fontFamily: 'Poppins-Light', textAlign: 'center', marginTop: -10 }}>Gas Status</Text>
+                    </View>
                   </View>
                 </View>
               </View>
-
             </View>
           </View>
         </View>
@@ -254,11 +341,14 @@ const ThresholdScreen = () => {
     if (activeTab === 'Threshold') {
       return (
         <View style={styles.contentContainer}>
-          <Text style={styles.contentTitle}>SELECT PARAMETERS</Text>
+          <Text style={styles.contentTitle}>Select Parameters</Text>
           <TouchableOpacity 
             style={styles.thresholdButton} 
             onPress={() => setIsTempModalVisible(true)}
           >
+            <View style={{ padding: 7, borderRadius: 100, backgroundColor: "#ffffff2e", alignSelf: "flex-start"  }}>
+              <Ionicons name="thermometer-outline" size={20} color="#fff" />
+            </View>
             <Text style={styles.thresholdButtonText}>Temperature</Text>
           </TouchableOpacity>
 
@@ -266,6 +356,9 @@ const ThresholdScreen = () => {
             style={styles.thresholdButton} 
             onPress={() => setIsPressureModalVisible(true)}
           >
+            <View style={{ padding: 7, borderRadius: 100, backgroundColor: "#ffffff2e", alignSelf: "flex-start"  }}>
+              <Ionicons name="speedometer-outline" size={20} color="#fff" />
+            </View>
             <Text style={styles.thresholdButtonText}>Pressure</Text>
           </TouchableOpacity>
 
@@ -345,14 +438,14 @@ const ThresholdScreen = () => {
 
             <View style={styles.modalButtonRow}>
               <TouchableOpacity 
-                style={[styles.modalButton, { backgroundColor: 'red' }]} 
+                style={[styles.modalButton, { backgroundColor: '#242328', borderColor: '#ccc', borderWidth: 1 }]} 
                 onPress={() => setIsTempModalVisible(false)}
               >
                 <Text style={styles.modalButtonText}>Cancel</Text>
               </TouchableOpacity>
               
               <TouchableOpacity 
-                style={[styles.modalButton, { backgroundColor: 'green' }]} 
+                style={[styles.modalButton, { backgroundColor: '#1654ff' }]} 
                 onPress={async () => {
                   await updateThreshold('Temperature', minTemp, maxTemp);
                   setIsTempModalVisible(false);
@@ -424,14 +517,16 @@ export default ThresholdScreen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#1a1a1a',
     // backgroundColor: '#c4c4c4',
     // backgroundColor: 'blue'
   },
   tabContainer: {
     flexDirection: 'row',
-    backgroundColor: '#c4c4c4',
+    backgroundColor: '#1a1a1a',
     borderRadius: 40,
-    marginHorizontal: 20,
+    gap: 10,
+    marginHorizontal: 12,
     overflow: 'hidden',
     // marginBottom: 10,
     // marginTop: 10,
@@ -441,34 +536,34 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 100
   },
   
   activeTabButton: {
-    backgroundColor: '#19354d',
+    backgroundColor: '#1654ff',
   },
   
   inactiveTabButton: {
-    backgroundColor: '#c4c4c4',
+    backgroundColor: '#232227',
   },
   
   tabText: {
-    fontSize: 18,
+    fontSize: 14,
     fontFamily: 'Poppins-Regular',
     textAlign: 'center',
   },
   
   activeTabText: {
     color: '#ffffff',
-    fontFamily: 'Poppins-SemiBold',
+    fontFamily: 'Poppins-Regular',
   },
   
   inactiveTabText: {
-    color: '#6b7280',
+    color: '#ffffff',
   },
 
   scrollContent: {
-    // flex: 1,
-    padding: 16,
+    padding: 5,
     paddingBottom: 50,
     flexGrow: 1
   },
@@ -478,13 +573,14 @@ const styles = StyleSheet.create({
     height: 'auto',
     padding: 10,
     borderRadius: 20,
-    // backgroundColor: '#c4c4c4'
   },
   contentTitle: {
     fontFamily: 'Poppins-SemiBold',
     marginHorizontal: 'auto',
     fontSize: 26,
-    marginBottom: 30
+    marginBottom: 20,
+    marginTop: 20,
+    color: '#fff'
   },
   autoTitleText:{
     fontFamily: 'Poppins-SemiBold',
@@ -527,7 +623,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 10
+    marginBottom: 10,
   },
   cardTitle:{
     fontFamily: 'Poppins-SemiBold',
@@ -535,12 +631,13 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   sensorCard:{
-    width: width / 2 - 30,
+    width: '49%',
   },
   sensorReadingCard:{
-    backgroundColor: '#bbb6a3',
-    borderRadius: 20,
-    padding: 20
+    backgroundColor: '#242328',
+    borderRadius: 40,
+    padding: 20,
+    height: 180,
   },
   sensorIcon:{
     width: 40,
@@ -548,13 +645,16 @@ const styles = StyleSheet.create({
   },
   sensorValueText:{
     fontFamily: 'Poppins-SemiBold',
-    fontSize: 36,
-    textAlign: 'center'
+    fontSize: 40,
+    textAlign: 'center',
+    marginTop: 20,
+    color: "#fff"
   },
   sensorStatusText:{
     fontFamily: 'Poppins-Regular',
-    fontSize: 12,
-    textAlign: 'center'
+    fontSize: 10,
+    textAlign: 'center',
+    paddingHorizontal: 3
   },
 
   iconButton: {
@@ -598,69 +698,79 @@ const styles = StyleSheet.create({
 
   // MODAL
   thresholdButton: {
-    backgroundColor: '#82797a',
+    backgroundColor: '#242328',
     padding: 18,
     borderRadius: 20,
     marginTop: 20,
+    gap: 10,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center'
   },
   thresholdButtonText: {
     color: 'white',
-    fontFamily: 'Poppins-SemiBold',
+    fontFamily: 'Poppins-Regular',
     fontSize: 16,
   },
   
   modalOverlay: {
     flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContainer: {
-    width: '80%',
-    backgroundColor: 'white',
-    borderRadius: 20,
+    width: '85%',
+    backgroundColor: '#242328',
+    borderRadius: 15,
     padding: 20,
-    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
   },
   modalTitle: {
+    color: '#fff',
     fontSize: 18,
-    fontFamily: 'Poppins-SemiBold',
     marginBottom: 15,
+    textAlign: 'center',
+    fontFamily: 'Poppins-SemiBold'
   },
-  modalInputTitle:{
-    marginRight: 'auto',
-    fontFamily: 'Poppins-Regular',
+  modalInputTitle: {
+    color: '#fff',
+    fontSize: 14,
+    marginBottom: 5,
+    marginTop: 10,
+    fontFamily: 'Poppins-Regular'
   },
   modalInput: {
-    width: '100%',
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#3b3b3b',
+    backgroundColor: '#1a1a1a',
+    color: '#fff',
     borderRadius: 10,
-    padding: 18,
-    marginVertical: 10,
-    fontFamily: 'Poppins-Regular',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontFamily: 'Poppins-Regular'
   },
   modalButtonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 20,
-    width: '100%',
   },
   modalButton: {
     flex: 1,
-    marginHorizontal: 5,
-    padding: 12,
-    borderRadius: 10,
+    paddingVertical: 10,
+    borderRadius: 30,
     alignItems: 'center',
+    marginHorizontal: 5,
   },
   modalButtonText: {
-    color: 'white',
-    fontFamily: 'Poppins-SemiBold',
-    fontSize: 16,
+    color: '#fff',
+    fontFamily: 'Poppins-Regular',
+    fontSize: 14,
   },
   fullWidthCardContainer: {
     width: '100%',
-    marginTop: 10,
   },
 })

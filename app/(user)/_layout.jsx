@@ -76,7 +76,7 @@ export default function AdminTabsLayout() {
         screenOptions={{
           tabBarStyle: {
             position: 'absolute',
-            backgroundColor: '#fff',
+            backgroundColor: '#323338',
             borderTopWidth: 0,
             elevation: 5,
             height: 70,
@@ -87,9 +87,9 @@ export default function AdminTabsLayout() {
             shadowOpacity: 0.05,
             shadowRadius: 8,
           },
-          tabBarShowLabel: false,
+          tabBarShowLabel: true,
           headerStyle: {
-            backgroundColor: '#fff',
+            backgroundColor: '#1a1a1a',
             elevation: 0,
             shadowOpacity: 0,
           },
@@ -106,8 +106,9 @@ export default function AdminTabsLayout() {
                 source={images.logo}
                 style={styles.imageLogo}
                 resizeMode='contain'
-              />
-              <Text style={styles.appNameText}>iFlutter</Text> */}
+              /> */}
+              <Text style={styles.appNameText}>Hi, User</Text>
+              <Text style={styles.appSubText}>Welcome to your smart tech!</Text>
             </View>
           ),
           headerRight: () => (
@@ -120,7 +121,7 @@ export default function AdminTabsLayout() {
                 style={styles.notificationButton}
               >
                 <View style={styles.notificationContainer}>
-                  <Ionicons name="notifications-outline" size={26} color="#333" />
+                  <Ionicons name="notifications-outline" size={30} color="#fff" />
                   {unreadCount > 0 && (
                     <View style={styles.notificationCountContainer}>
                       <Text style={styles.notificationCountText}>{unreadCount}</Text>
@@ -137,11 +138,22 @@ export default function AdminTabsLayout() {
           name="(tabs)/index"
           options={{
             tabBarIcon: ({ focused }) => (
-              <Ionicons
-                name={focused ? 'radio' : 'radio-outline'}
-                size={26}
-                color={focused ? '#007AFF' : '#999'}
-              />
+              <View
+                style={{
+                  backgroundColor: focused ? '#007AFF' : 'transparent',
+                  width: 80,
+                  height: 60,
+                  borderRadius: 30,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Ionicons
+                  name={focused ? 'radio' : 'radio-outline'}
+                  size={26}
+                  color={focused ? '#fff' : '#999'}
+                />
+              </View>
             ),
           }}
         />
@@ -149,11 +161,22 @@ export default function AdminTabsLayout() {
           name="(tabs)/data"
           options={{
             tabBarIcon: ({ focused }) => (
-              <Ionicons
-                name={focused ? 'analytics' : 'analytics-outline'}
-                size={30}
-                color={focused ? '#007AFF' : '#999'}
-              />
+              <View
+                style={{
+                  backgroundColor: focused ? '#007AFF' : 'transparent',
+                  width: 80,
+                  height: 60,
+                  borderRadius: 30,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Ionicons
+                  name={focused ? 'analytics' : 'analytics-outline'}
+                  size={30}
+                  color={focused ? '#fff' : '#999'}
+                />
+              </View>
             ),
           }}
         />
@@ -197,8 +220,8 @@ export default function AdminTabsLayout() {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'col',
+    // alignItems: 'center',
     marginLeft: 10,
   },
   imageLogo: {
@@ -206,10 +229,16 @@ const styles = StyleSheet.create({
     height: 36,
   },
   appNameText: {
-    fontFamily: 'Poppins-Medium',
+    fontFamily: 'Poppins-Regular',
     fontSize: 18,
     marginLeft: 6,
-    color: '#333',
+    color: '#ffffff',
+  },
+  appSubText: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 14,
+    marginLeft: 6,
+    color: '#6b6b6b',
   },
   notificationButton: {
     marginRight: 16,
@@ -221,10 +250,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -4,
     right: -6,
-    backgroundColor: '#FF3B30',
+    backgroundColor: '#1654ff',
     borderRadius: 10,
-    paddingHorizontal: 5,
-    minWidth: 16,
+    width: 18,              // fixed size
+    height: 18,
+    // minWidth: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -251,42 +281,47 @@ const styles = StyleSheet.create({
   },
   dropdownOverlay: {
     position: 'absolute',
-    top: 80, // just below header
+    top: 80,
     right: 15,
     width: 300,
-    height: 300,         // fixed height for scrolling
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 10,
+    height: 300,
+    backgroundColor: '#242328', // dark theme
+    borderRadius: 16,
+    padding: 12,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 6,
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 10,
     zIndex: 9999,
+    borderWidth: 1,
+    borderColor: '#333', // subtle border
   },
-  
   dropdownHeaderText: {
     fontSize: 16,
     fontFamily: 'Poppins-SemiBold',
-    color: '#111',
-    marginBottom: 6,
+    color: '#fff',
+    marginBottom: 8,
+    textAlign: 'center',
   },
   dropdownItem: {
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderBottomWidth: 0.5,
-    borderColor: '#ddd',
+    borderColor: '#3a3a3a',
   },
   dropdownText: {
     fontSize: 14,
-    color: '#333',
+    color: '#e0e0e0',
     fontFamily: 'Poppins-Regular',
   },
   unreadText: {
+    color: '#fff',
     fontWeight: '600',
   },
   dateText: {
     fontSize: 12,
-    color: '#666',
+    color: '#888',
     textAlign: 'right',
-  },
+    marginTop: 4,
+    fontFamily: 'Poppins-Light',
+  },  
 });
