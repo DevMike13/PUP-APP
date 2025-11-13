@@ -46,8 +46,18 @@ export default function Layout() {
     }
   }, [fontsLoaded, error]);
 
+  // useEffect(() => {
+  //   registerAndStorePushToken();
+  // }, []);
   useEffect(() => {
-    registerAndStorePushToken();
+    if (__DEV__) {
+      if (!global.pushTokenRegistered) {
+        global.pushTokenRegistered = true;
+        registerAndStorePushToken();
+      }
+    } else {
+      registerAndStorePushToken();
+    }
   }, []);
 
   if (loading || !hasMounted) {

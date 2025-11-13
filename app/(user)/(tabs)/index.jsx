@@ -8,80 +8,80 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { images } from '../../../constants';
 
 const { width } = Dimensions.get('window');
-const tabList = ['Monitoring', 'Threshold'];
+// const tabList = ['Monitoring', 'Threshold'];
 
 
 const ThresholdScreen = () => {
-  const [activeTab, setActiveTab] = useState(tabList[0]);
+  // const [activeTab, setActiveTab] = useState(tabList[0]);
   
   const [temperature, setTemperature] = useState(null);
   const [pressure, setPressure] = useState(null);
   const [gasStatus, setGasStatus] = useState(null);
-  const [tempMin, setTempMin] = useState(null);
-  const [tempMax, setTempMax] = useState(null);
-  const [pressureMin, setPressureMin] = useState(null);
-  const [pressureMax, setPressureMax] = useState(null);
+  // const [tempMin, setTempMin] = useState(null);
+  // const [tempMax, setTempMax] = useState(null);
+  // const [pressureMin, setPressureMin] = useState(null);
+  // const [pressureMax, setPressureMax] = useState(null);
 
   
 
-  const [isTempModalVisible, setIsTempModalVisible] = useState(false);
-  const [minTemp, setMinTemp] = useState('');
-  const [maxTemp, setMaxTemp] = useState('');
+  // const [isTempModalVisible, setIsTempModalVisible] = useState(false);
+  // const [minTemp, setMinTemp] = useState('');
+  // const [maxTemp, setMaxTemp] = useState('');
 
-  const [isPressureModalVisible, setIsPressureModalVisible] = useState(false);
-  const [minPressure, setMinPressure] = useState('');
-  const [maxPressure, setMaxPressure] = useState('');
+  // const [isPressureModalVisible, setIsPressureModalVisible] = useState(false);
+  // const [minPressure, setMinPressure] = useState('');
+  // const [maxPressure, setMaxPressure] = useState('');
 
-  useEffect(() => {
-    if (isTempModalVisible) {
-      const minRef = ref(realtimeDB, 'Temperature/Min');
-      const maxRef = ref(realtimeDB, 'Temperature/Max');
+  // useEffect(() => {
+  //   if (isTempModalVisible) {
+  //     const minRef = ref(realtimeDB, 'Temperature/Min');
+  //     const maxRef = ref(realtimeDB, 'Temperature/Max');
   
-      onValue(minRef, snapshot => {
-        if (snapshot.exists()) setMinTemp(String(snapshot.val()));
-      });
+  //     onValue(minRef, snapshot => {
+  //       if (snapshot.exists()) setMinTemp(String(snapshot.val()));
+  //     });
   
-      onValue(maxRef, snapshot => {
-        if (snapshot.exists()) setMaxTemp(String(snapshot.val()));
-      });
-    }
-  }, [isTempModalVisible]);
+  //     onValue(maxRef, snapshot => {
+  //       if (snapshot.exists()) setMaxTemp(String(snapshot.val()));
+  //     });
+  //   }
+  // }, [isTempModalVisible]);
 
-  useEffect(() => {
-    if (isPressureModalVisible) {
-      const minRef = ref(realtimeDB, 'Pressure/Min');
-      const maxRef = ref(realtimeDB, 'Pressure/Max');
+  // useEffect(() => {
+  //   if (isPressureModalVisible) {
+  //     const minRef = ref(realtimeDB, 'Pressure/Min');
+  //     const maxRef = ref(realtimeDB, 'Pressure/Max');
   
-      onValue(minRef, snapshot => {
-        if (snapshot.exists()) setMinPressure(String(snapshot.val()));
-      });
+  //     onValue(minRef, snapshot => {
+  //       if (snapshot.exists()) setMinPressure(String(snapshot.val()));
+  //     });
   
-      onValue(maxRef, snapshot => {
-        if (snapshot.exists()) setMaxPressure(String(snapshot.val()));
-      });
-    }
-  }, [isPressureModalVisible]);
+  //     onValue(maxRef, snapshot => {
+  //       if (snapshot.exists()) setMaxPressure(String(snapshot.val()));
+  //     });
+  //   }
+  // }, [isPressureModalVisible]);
 
  
-  const updateThreshold = async (path, minValue, maxValue) => {
-    try {
-      await set(ref(realtimeDB, `${path}/Min`), parseFloat(minValue));
-      await set(ref(realtimeDB, `${path}/Max`), parseFloat(maxValue));
-      console.log(`${path} threshold updated: Min=${minValue}, Max=${maxValue}`);
-    } catch (error) {
-      console.error("Error updating threshold:", error);
-    }
-  };
+  // const updateThreshold = async (path, minValue, maxValue) => {
+  //   try {
+  //     await set(ref(realtimeDB, `${path}/Min`), parseFloat(minValue));
+  //     await set(ref(realtimeDB, `${path}/Max`), parseFloat(maxValue));
+  //     console.log(`${path} threshold updated: Min=${minValue}, Max=${maxValue}`);
+  //   } catch (error) {
+  //     console.error("Error updating threshold:", error);
+  //   }
+  // };
   
   useEffect(() => {
     
     const tempRef = ref(realtimeDB, 'Temperature/SensorValue');
     const pressureRef = ref(realtimeDB, 'Pressure/SensorValue');
     const gasStatusRef = ref(realtimeDB, 'GasStatus');
-    const tempMinRef = ref(realtimeDB, 'Temperature/Min');
-    const tempMaxRef = ref(realtimeDB, 'Temperature/Max');
-    const pressureMinRef = ref(realtimeDB, 'Pressure/Min');
-    const pressureMaxRef = ref(realtimeDB, 'Pressure/Max');
+    // const tempMinRef = ref(realtimeDB, 'Temperature/Min');
+    // const tempMaxRef = ref(realtimeDB, 'Temperature/Max');
+    // const pressureMinRef = ref(realtimeDB, 'Pressure/Min');
+    // const pressureMaxRef = ref(realtimeDB, 'Pressure/Max');
 
     const unsubTemp = onValue(tempRef, snapshot => {
       if (snapshot.exists()) setTemperature(snapshot.val());
@@ -95,33 +95,33 @@ const ThresholdScreen = () => {
       if (snapshot.exists()) setGasStatus(snapshot.val());
     });
 
-    const unsubTempMin = onValue(tempMinRef, (snap) => {
-      if (snap.exists()) setTempMin(snap.val());
-    });
-    const unsubTempMax = onValue(tempMaxRef, (snap) => {
-      if (snap.exists()) setTempMax(snap.val());
-    });
-    const unsubPressureMin = onValue(pressureMinRef, (snap) => {
-      if (snap.exists()) setPressureMin(snap.val());
-    });
-    const unsubPressureMax = onValue(pressureMaxRef, (snap) => {
-      if (snap.exists()) setPressureMax(snap.val());
-    });
+    // const unsubTempMin = onValue(tempMinRef, (snap) => {
+    //   if (snap.exists()) setTempMin(snap.val());
+    // });
+    // const unsubTempMax = onValue(tempMaxRef, (snap) => {
+    //   if (snap.exists()) setTempMax(snap.val());
+    // });
+    // const unsubPressureMin = onValue(pressureMinRef, (snap) => {
+    //   if (snap.exists()) setPressureMin(snap.val());
+    // });
+    // const unsubPressureMax = onValue(pressureMaxRef, (snap) => {
+    //   if (snap.exists()) setPressureMax(snap.val());
+    // });
 
     return () => {
       unsubTemp();
       unsubPressure();
       unsubGas();
-      unsubTempMin();
-      unsubTempMax();
-      unsubPressureMin();
-      unsubPressureMax();
+      // unsubTempMin();
+      // unsubTempMax();
+      // unsubPressureMin();
+      // unsubPressureMax();
     };
   }, []);
 
 
   const renderContent = () => {
-    if (activeTab === 'Monitoring') {
+    // if (activeTab === 'Monitoring') {
       return (
         <View style={styles.contentContainer}>
           <View>
@@ -150,11 +150,11 @@ const ThresholdScreen = () => {
                           },
                           {
                             backgroundColor:
-                              temperature === null || tempMin === null || tempMax === null
+                              temperature === null
                                 ? "#ffffff2e"
-                                : temperature > tempMax
+                                : temperature > 38.0
                                 ? "#ff4d4d30" 
-                                : temperature < tempMin
+                                : temperature < 25.0
                                 ? "#4db8ff30"
                                 : "#4dff4d30",
                           }
@@ -164,21 +164,21 @@ const ThresholdScreen = () => {
                             styles.sensorStatusText,
                             {
                               color:
-                                temperature === null || tempMin === null || tempMax === null
+                                temperature === null
                                   ? 'gray'
-                                  : temperature > tempMax
+                                  : temperature > 38.0
                                   ? 'red'
-                                  : temperature < tempMin
+                                  : temperature < 25.0
                                   ? 'lightblue'
                                   : 'green',
                             },
                           ]}
                         >
-                          {temperature === null || tempMin === null || tempMax === null
+                          {temperature === null
                           ? 'Reading...'
-                          : temperature > tempMax
+                          : temperature > 38.0
                           ? 'High Temp'
-                          : temperature < tempMin
+                          : temperature < 25.0
                           ? 'Low Temp'
                           : 'Normal Temp'}
                         </Text>
@@ -216,11 +216,11 @@ const ThresholdScreen = () => {
                           },
                           {
                             backgroundColor:
-                              pressure === null || pressureMin === null || pressureMax === null
+                              pressure === null 
                                 ? "#ffffff2e"
-                                : pressure > pressureMax
+                                : pressure > 8.0
                                 ? "#ff4d4d30" 
-                                : pressure < pressureMin
+                                : pressure < 5.0
                                 ? "#4db8ff30"
                                 : "#4dff4d30",
                           }
@@ -230,21 +230,21 @@ const ThresholdScreen = () => {
                             styles.sensorStatusText,
                             {
                               color:
-                                pressure === null || pressureMin === null || pressureMax === null
+                                pressure === null 
                                   ? 'gray'
-                                  : pressure > pressureMax
+                                  : pressure > 8.0
                                   ? 'red'
-                                  : pressure < pressureMin
+                                  : pressure < 5.0
                                   ? 'lightblue'
                                   : 'green',
                             },
                           ]}
                         >
-                          {pressure === null || pressureMin === null || pressureMax === null
+                          {pressure === null
                           ? 'Reading...'
-                          : pressure > pressureMax
+                          : pressure > 8.0
                           ? 'High Pressure'
-                          : pressure < pressureMin
+                          : pressure < 5.0
                           ? 'Low Pressure'
                           : 'Good Condition'}
                         </Text>
@@ -293,11 +293,11 @@ const ThresholdScreen = () => {
                           },
                           {
                             backgroundColor:
-                              pressure === null || pressureMin === null || pressureMax === null
+                              gasStatus === null 
                                 ? "#ffffff2e"
-                                : pressure > pressureMax
+                                : pressure  === 'On Process'
                                 ? "#ff4d4d30" 
-                                : pressure < pressureMin
+                                : pressure === 'Ready to Harvest'
                                 ? "#4db8ff30"
                                 : "#4dff4d30",
                           }
@@ -336,42 +336,42 @@ const ThresholdScreen = () => {
           </View>
         </View>
       );
-    }
+    // }
 
-    if (activeTab === 'Threshold') {
-      return (
-        <View style={styles.contentContainer}>
-          <Text style={styles.contentTitle}>Select Parameters</Text>
-          <TouchableOpacity 
-            style={styles.thresholdButton} 
-            onPress={() => setIsTempModalVisible(true)}
-          >
-            <View style={{ padding: 7, borderRadius: 100, backgroundColor: "#ffffff2e", alignSelf: "flex-start"  }}>
-              <Ionicons name="thermometer-outline" size={20} color="#fff" />
-            </View>
-            <Text style={styles.thresholdButtonText}>Temperature</Text>
-          </TouchableOpacity>
+    // if (activeTab === 'Threshold') {
+    //   return (
+    //     <View style={styles.contentContainer}>
+    //       <Text style={styles.contentTitle}>Select Parameters</Text>
+    //       <TouchableOpacity 
+    //         style={styles.thresholdButton} 
+    //         onPress={() => setIsTempModalVisible(true)}
+    //       >
+    //         <View style={{ padding: 7, borderRadius: 100, backgroundColor: "#ffffff2e", alignSelf: "flex-start"  }}>
+    //           <Ionicons name="thermometer-outline" size={20} color="#fff" />
+    //         </View>
+    //         <Text style={styles.thresholdButtonText}>Temperature</Text>
+    //       </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={styles.thresholdButton} 
-            onPress={() => setIsPressureModalVisible(true)}
-          >
-            <View style={{ padding: 7, borderRadius: 100, backgroundColor: "#ffffff2e", alignSelf: "flex-start"  }}>
-              <Ionicons name="speedometer-outline" size={20} color="#fff" />
-            </View>
-            <Text style={styles.thresholdButtonText}>Pressure</Text>
-          </TouchableOpacity>
+    //       <TouchableOpacity 
+    //         style={styles.thresholdButton} 
+    //         onPress={() => setIsPressureModalVisible(true)}
+    //       >
+    //         <View style={{ padding: 7, borderRadius: 100, backgroundColor: "#ffffff2e", alignSelf: "flex-start"  }}>
+    //           <Ionicons name="speedometer-outline" size={20} color="#fff" />
+    //         </View>
+    //         <Text style={styles.thresholdButtonText}>Pressure</Text>
+    //       </TouchableOpacity>
 
-        </View>
-      );
-    }
+    //     </View>
+    //   );
+    // }
 
-    return null;
+    // return null;
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.tabContainer}>
+      {/* <View style={styles.tabContainer}>
         {tabList.map((item) => (
           <TouchableOpacity
             key={item}
@@ -391,7 +391,7 @@ const ThresholdScreen = () => {
             </Text>
           </TouchableOpacity>
         ))}
-      </View>
+      </View> */}
 
       <ScrollView 
         style={{ flex: 1 }}
@@ -408,7 +408,7 @@ const ThresholdScreen = () => {
       </ScrollView>
 
       {/* TEMP MODAL */}
-      <Modal
+      {/* <Modal
         animationType="slide"
         transparent={true}
         visible={isTempModalVisible}
@@ -456,10 +456,10 @@ const ThresholdScreen = () => {
             </View>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
 
       {/* HUMID MODAL */}
-      <Modal
+      {/* <Modal
         animationType="slide"
         transparent={true}
         visible={isPressureModalVisible}
@@ -507,7 +507,7 @@ const ThresholdScreen = () => {
             </View>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
     </SafeAreaView>
   )
 }
