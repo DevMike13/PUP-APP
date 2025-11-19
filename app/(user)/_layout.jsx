@@ -108,7 +108,7 @@ export default function AdminTabsLayout() {
                 resizeMode='contain'
               /> */}
               <Text style={styles.appNameText}>Hi, User</Text>
-              <Text style={styles.appSubText}>Welcome to your smart tech!</Text>
+              <Text style={styles.appSubText}>Welcome to your Biogas Monitoring System!</Text>
             </View>
           ),
           headerRight: () => (
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   },
   appSubText: {
     fontFamily: 'Poppins-Regular',
-    fontSize: 14,
+    fontSize: 12,
     marginLeft: 6,
     color: '#6b6b6b',
   },

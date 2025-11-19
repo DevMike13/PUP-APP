@@ -132,11 +132,6 @@ const ThresholdScreen = () => {
                 <View style={styles.sensorCard}>
                   {/* <Text style={styles.cardTitle}>TEMPERATURE</Text> */}
                   <View style={styles.sensorReadingCard}>
-                    {/* <Image 
-                      source={images.tempIcon}
-                      style={styles.sensorIcon}
-                      resizeMode='contain'
-                    /> */}
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
                       <View style={{ padding: 7, borderRadius: 100, backgroundColor: "#ffffff2e", alignSelf: "flex-start"  }}>
                         <Ionicons name="thermometer-outline" size={20} color="#fff" />
@@ -150,13 +145,17 @@ const ThresholdScreen = () => {
                           },
                           {
                             backgroundColor:
-                              temperature === null
-                                ? "#ffffff2e"
-                                : temperature > 38.0
-                                ? "#ff4d4d30" 
-                                : temperature < 25.0
-                                ? "#4db8ff30"
-                                : "#4dff4d30",
+                            temperature === null
+                              ? "#ffffff2e"
+                              : temperature <= 30
+                              ? "#4db8ff30"     // Low Temp (blue)
+                              : temperature >= 31 && temperature <= 36
+                              ? "#4dff4d30"     // Normal Temp (green)
+                              : temperature >= 37 && temperature <= 44
+                              ? "#ffa64d30"     // Optimal Temp (orange)
+                              : temperature >= 48
+                              ? "#ff4d4d30"     // High Temp (red)
+                              : "#ffffff2e",
                           }
                         ]}
                       >
@@ -164,23 +163,31 @@ const ThresholdScreen = () => {
                             styles.sensorStatusText,
                             {
                               color:
-                                temperature === null
-                                  ? 'gray'
-                                  : temperature > 38.0
-                                  ? 'red'
-                                  : temperature < 25.0
-                                  ? 'lightblue'
-                                  : 'green',
+                              temperature === null
+                                ? 'gray'
+                                : temperature <= 30
+                                ? 'lightblue'
+                                : temperature >= 31 && temperature <= 36
+                                ? 'green'
+                                : temperature >= 37 && temperature <= 44
+                                ? 'orange'
+                                : temperature >= 48
+                                ? 'red'
+                                : 'gray',
                             },
                           ]}
                         >
                           {temperature === null
-                          ? 'Reading...'
-                          : temperature > 38.0
-                          ? 'High Temp'
-                          : temperature < 25.0
-                          ? 'Low Temp'
-                          : 'Normal Temp'}
+                            ? 'Reading...'
+                            : temperature <= 30
+                            ? 'Low Temp'
+                            : temperature >= 31 && temperature <= 36
+                            ? 'Normal Temp'
+                            : temperature >= 37 && temperature <= 44
+                            ? 'Optimal Temp'
+                            : temperature >= 48
+                            ? 'High Temp'
+                            : 'Reading...'}
                         </Text>
                       </View>
                     </View>
@@ -188,7 +195,7 @@ const ThresholdScreen = () => {
                     <Text numberOfLines={1} adjustsFontSizeToFit style={styles.sensorValueText}>
                       {temperature !== null ? (
                         <>
-                          {temperature}
+                          {parseFloat(temperature).toFixed(2)}
                           <Text style={{ color: '#6b6b6b', fontFamily: 'Poppins-Regular', fontSize: 20 }}> °C</Text>
                         </>
                       ) : (
@@ -216,13 +223,15 @@ const ThresholdScreen = () => {
                           },
                           {
                             backgroundColor:
-                              pressure === null 
-                                ? "#ffffff2e"
-                                : pressure > 8.0
-                                ? "#ff4d4d30" 
-                                : pressure < 5.0
-                                ? "#4db8ff30"
-                                : "#4dff4d30",
+                            pressure === null
+                              ? "#ffffff2e"
+                              : pressure >= 90
+                              ? "#ff4d4d30"      // High (red)
+                              : pressure >= 50 && pressure <= 80
+                              ? "#4dff4d30"      // Optimal (green)
+                              : pressure <= 40
+                              ? "#4db8ff30"      // Low (blue)
+                              : "#ffffff2e",
                           }
                         ]}
                       >
@@ -230,23 +239,27 @@ const ThresholdScreen = () => {
                             styles.sensorStatusText,
                             {
                               color:
-                                pressure === null 
-                                  ? 'gray'
-                                  : pressure > 8.0
-                                  ? 'red'
-                                  : pressure < 5.0
-                                  ? 'lightblue'
-                                  : 'green',
+                              pressure === null
+                                ? 'gray'
+                                : pressure >= 90
+                                ? 'red'
+                                : pressure >= 50 && pressure <= 80
+                                ? 'green'
+                                : pressure <= 40
+                                ? 'lightblue'
+                                : 'gray',
                             },
                           ]}
                         >
                           {pressure === null
-                          ? 'Reading...'
-                          : pressure > 8.0
-                          ? 'High Pressure'
-                          : pressure < 5.0
-                          ? 'Low Pressure'
-                          : 'Good Condition'}
+                            ? 'Reading...'
+                            : pressure >= 90
+                            ? 'High Pressure'
+                            : pressure >= 50 && pressure <= 80
+                            ? 'Optimal Pressure'
+                            : pressure <= 40
+                            ? 'Low Pressure'
+                            : 'Reading...'}
                         </Text>
                       </View>
                     </View>
@@ -273,11 +286,11 @@ const ThresholdScreen = () => {
                   {/* <Text style={styles.cardTitle}>PRESSURE</Text> */}
                   <View style={styles.sensorReadingCard}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
-                      <View style={{ padding: 7, borderRadius: 100, backgroundColor: "#ffffff2e", alignSelf: "flex-start"  }}>
-                        {gasStatus === 'On Process' && (
+                      <View style={{ padding: 7, borderRadius: 100, backgroundColor: "#ffffff2e", alignSelf: "flex-start" }}>
+                        {gasStatus === 'Gas is Forming' && (
                           <MaterialCommunityIcons name="cog-sync" size={20} color="#fff" />
                         )}
-                        {gasStatus === 'Ready to Harvest' && (
+                        {gasStatus === 'Gas Detected' && (
                           <MaterialCommunityIcons name="check-decagram" size={20} color="#fff" />
                         )}
                         {!gasStatus && (
@@ -293,13 +306,13 @@ const ThresholdScreen = () => {
                           },
                           {
                             backgroundColor:
-                              gasStatus === null 
-                                ? "#ffffff2e"
-                                : pressure  === 'On Process'
-                                ? "#ff4d4d30" 
-                                : pressure === 'Ready to Harvest'
-                                ? "#4db8ff30"
-                                : "#4dff4d30",
+                            gasStatus === null
+                              ? "#ffffff2e"
+                              : gasStatus === 'Gas is Forming'
+                              ? "#ffa64d30"     // Orange
+                              : gasStatus === 'Gas Detected'
+                              ? "#4dff4d30"     // Green
+                              : "#ffffff2e",
                           }
                         ]}
                       >
@@ -307,19 +320,19 @@ const ThresholdScreen = () => {
                             styles.sensorStatusText,
                             {
                               color:
-                              gasStatus === 'On Process'
+                              gasStatus === 'Gas is Forming'
                                 ? 'orange'
-                                : gasStatus === 'Ready to Harvest'
+                                : gasStatus === 'Gas Detected'
                                 ? 'green'
                                 : 'gray',
                             },
                           ]}
                         >
-                          {gasStatus === 'On Process'
-                          ? 'Currently Processing'
-                          : gasStatus === 'Ready to Harvest'
-                          ? 'Ready to Harvest'
-                          : 'Waiting for Data'}
+                          {gasStatus === 'Gas is Forming'
+                            ? 'Gas is Forming'
+                            : gasStatus === 'Gas Detected'
+                            ? 'Gas Detected'
+                            : 'Waiting for Data'}
                         </Text>
                       </View>
                     </View>

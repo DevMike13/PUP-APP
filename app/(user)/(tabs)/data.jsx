@@ -27,6 +27,7 @@ const DataScreen = () => {
   const [fadeAnim] = useState(new Animated.Value(0));
 
   const [selectedRange, setSelectedRange] = useState('24h');
+  const [rangeLabel, setRangeLabel] = useState('');
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [showPicker, setShowPicker] = useState({ type: null, visible: false });
@@ -48,8 +49,8 @@ const DataScreen = () => {
 
         return {
           timestamp: date,
-          temperature: d.temperature,
-          pressure: d.pressure, // <-- use pressure field
+          temperature: d.temperature ?? 0,
+          pressure: d.pressure ?? 0,
           label: shortLabel,
         };
       });
@@ -63,7 +64,10 @@ const DataScreen = () => {
 
   // Filter data by range
   useEffect(() => {
-    if (sensorData.length === 0) return;
+    if (!sensorData || sensorData.length === 0) {
+      setFilteredData([]);
+      return;
+    }
 
     const now = new Date();
     let filtered = [];
@@ -86,12 +90,35 @@ const DataScreen = () => {
     setFilteredData(filtered);
   }, [selectedRange, sensorData, startDate, endDate]);
 
-  const toChartData = (key, unit = '') =>
-    filteredData.map((item) => ({
-      value: item[key],
-      label: item.label,
-      dataPointText: `${item[key]}${unit}`,
+  useEffect(() => {
+    if (!filteredData || filteredData.length === 0) {
+      setRangeLabel('');
+      return;
+    }
+
+    const first = filteredData[0].timestamp;
+    const last = filteredData[filteredData.length - 1].timestamp;
+
+    const formatDate = (date) =>
+      date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    if (selectedRange === '24h') {
+      setRangeLabel(formatDate(last));
+    } else if (['7d', '30d', 'custom'].includes(selectedRange)) {
+      setRangeLabel(`${formatDate(first)} - ${formatDate(last)}`);
+    }
+  }, [filteredData, selectedRange]);
+  
+  
+
+  const toChartData = (key, unit = '') => {
+    if (!filteredData || filteredData.length === 0) return [];
+    return [...filteredData].reverse().map((item) => ({
+      value: item[key] !== undefined ? parseFloat(item[key].toFixed(2)) : 0,
+      label: item.label ?? '',
+      dataPointText: `${item[key] !== undefined ? item[key].toFixed(2) : 0}${unit}`,
     }));
+  };
 
   const handlePointPress = (item, title) => {
     setSelectedData({ ...item, title });
@@ -188,6 +215,7 @@ const DataScreen = () => {
             </TouchableOpacity>
           ))}
         </View>
+        <Text style={styles.dateRangeText}>{rangeLabel}</Text>
 
         {selectedRange === 'custom' && (
           <View style={styles.customRangeWrapper}>
@@ -394,4 +422,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   closeText: { color: '#fff', fontFamily: 'Poppins-SemiBold' },
+  dateRangeText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+    color: '#fff',
+    marginBottom: 10,
+  },
 });
