@@ -112,25 +112,26 @@ export default function AdminTabsLayout() {
             </View>
           ),
           headerRight: () => (
-            <View style={{ zIndex: 9999 }}>
-              <TouchableOpacity
-                onPress={() => {
-                  setShowDropdown(!showDropdown);
-                  if (!showDropdown) markNotificationsAsViewed();
-                }}
-                style={styles.notificationButton}
-              >
-                <View style={styles.notificationContainer}>
-                  <Ionicons name="notifications-outline" size={30} color="#fff" />
-                  {unreadCount > 0 && (
-                    <View style={styles.notificationCountContainer}>
-                      <Text style={styles.notificationCountText}>{unreadCount}</Text>
-                    </View>
-                  )}
-                </View>
-              </TouchableOpacity>
-              {/* <NotificationDropdown /> */}
-            </View>
+            // <View style={{ zIndex: 9999 }}>
+            //   <TouchableOpacity
+            //     onPress={() => {
+            //       setShowDropdown(!showDropdown);
+            //       if (!showDropdown) markNotificationsAsViewed();
+            //     }}
+            //     style={styles.notificationButton}
+            //   >
+            //     <View style={styles.notificationContainer}>
+            //       <Ionicons name="notifications-outline" size={30} color="#fff" />
+            //       {unreadCount > 0 && (
+            //         <View style={styles.notificationCountContainer}>
+            //           <Text style={styles.notificationCountText}>{unreadCount}</Text>
+            //         </View>
+            //       )}
+            //     </View>
+            //   </TouchableOpacity>
+            // </View>
+            <>
+            </>
           ),
         }}
       >
@@ -180,6 +181,59 @@ export default function AdminTabsLayout() {
             ),
           }}
         />
+        <Tabs.Screen
+          name="(tabs)/notif"
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <View
+                style={{
+                  width: 80,
+                  height: 60,
+                  borderRadius: 30,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: focused ? '#007AFF' : 'transparent',
+                  position: 'relative',
+                }}
+              >
+                <Ionicons
+                  name={focused ? 'notifications' : 'notifications-outline'}
+                  size={28}
+                  color={focused ? '#fff' : '#999'}
+                />
+
+                {unreadCount > 0 && (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      top: 8,
+                      right: 20,
+                      backgroundColor: '#FF3B30',
+                      borderRadius: 10,
+                      minWidth: 18,
+                      height: 18,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      paddingHorizontal: 4,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: '#fff',
+                        fontSize: 10,
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {unreadCount}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            ),
+          }}
+        />
+
+
       </Tabs>
     {showDropdown && (
     <View style={styles.dropdownOverlay}>

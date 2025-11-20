@@ -12,7 +12,7 @@ import {
   Platform,
 } from 'react-native';
 import { firestoreDB } from '../../../firebase';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, where, Timestamp } from 'firebase/firestore';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { LineChart } from 'react-native-gifted-charts';
 
@@ -32,46 +32,131 @@ const DataScreen = () => {
   const [endDate, setEndDate] = useState(null);
   const [showPicker, setShowPicker] = useState({ type: null, visible: false });
 
+  const getCutoffDate = () => {
+    const now = new Date();
+  
+    if (selectedRange === '24h') {
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+  
+    if (selectedRange === '7d') {
+      const sevenDaysAgo = new Date(now);
+      sevenDaysAgo.setDate(now.getDate() - 6);
+      return new Date(sevenDaysAgo.getFullYear(), sevenDaysAgo.getMonth(), sevenDaysAgo.getDate());
+    }
+  
+    if (selectedRange === '30d') {
+      const thirtyDaysAgo = new Date(now);
+      thirtyDaysAgo.setDate(now.getDate() - 29);
+      return new Date(thirtyDaysAgo.getFullYear(), thirtyDaysAgo.getMonth(), thirtyDaysAgo.getDate());
+    }
+  
+    if (selectedRange === 'custom') {
+      return startDate || now;
+    }
+  
+    return null;
+  };
+
+  const sanitizeData = (data) => {
+    return data.map((item) => {
+      const temp =
+        item.temperature < -50 || item.temperature > 100
+          ? null 
+          : parseFloat(item.temperature.toFixed(2));
+      const pres =
+        item.pressure < 0 || item.pressure > 200
+          ? null 
+          : parseFloat(item.pressure.toFixed(2));
+  
+      return {
+        ...item,
+        temperature: temp,
+        pressure: pres,
+      };
+    });
+  };
+
+  const aggregatePerDay = (data, key) => {
+    const map = new Map();
+  
+    data.forEach((item) => {
+      const dateKey = item.timestamp.toISOString().split('T')[0];
+      if (!map.has(dateKey)) {
+        map.set(dateKey, { sum: 0, count: 0 });
+      }
+  
+      const entry = map.get(dateKey);
+      if (item[key] !== null && item[key] !== undefined) {
+        entry.sum += item[key];
+        entry.count += 1;
+      }
+      map.set(dateKey, entry);
+    });
+  
+    const result = [];
+    for (const [dateStr, { sum, count }] of map) {
+      result.push({
+        timestamp: new Date(dateStr),
+        [key]: count > 0 ? parseFloat((sum / count).toFixed(2)) : null,
+        label: dateStr,
+      });
+    }
+  
+    return result.sort((a, b) => a.timestamp - b.timestamp);
+  };
+  
   // Fetch Firestore data
   useEffect(() => {
-    const q = query(collection(firestoreDB, 'sensorData'), orderBy('timestamp', 'asc'));
+    const cutoff = getCutoffDate();
+    if (!cutoff) return;
+  
+    const q = query(
+      collection(firestoreDB, 'sensorData'),
+      orderBy('timestamp', 'asc')
+    );
+  
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map((doc) => {
-        const d = doc.data();
-        const date = new Date(d.timestamp.seconds * 1000);
-        const shortLabel = `${date.toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-        })}-${date.toLocaleTimeString('en-US', {
-          hour: 'numeric',
-          hour12: true,
-        })}`;
-
-        return {
-          timestamp: date,
-          temperature: d.temperature ?? 0,
-          pressure: d.pressure ?? 0,
-          label: shortLabel,
-        };
-      });
-
-      setSensorData(data);
+      const data = snapshot.docs
+        .map((doc) => {
+          const d = doc.data();
+          let ts;
+          if (d.timestamp && d.timestamp.seconds !== undefined) {
+            ts = new Date(d.timestamp.seconds * 1000);
+          } else if (d.timestamp) {
+            ts = d.timestamp > 1000000000000 ? new Date(d.timestamp) : new Date(d.timestamp * 1000);
+          } else {
+            ts = new Date();
+          }
+  
+          return {
+            timestamp: ts,
+            temperature: d.temperature ?? null,
+            pressure: d.pressure ?? null,
+            label: `${ts.toLocaleString('en-US', { month: 'short', day: 'numeric' })}-${ts.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true })}`,
+          };
+        })
+        .filter((item) => item.timestamp >= cutoff);
+  
+      const sanitized = sanitizeData(data); // apply sanitization
+      setSensorData(sanitized);
       setLoading(false);
     });
-
+  
     return () => unsubscribe();
-  }, []);
-
+  }, [selectedRange, startDate, endDate]);
+  
+  
   // Filter data by range
   useEffect(() => {
     if (!sensorData || sensorData.length === 0) {
       setFilteredData([]);
       return;
     }
-
+  
     const now = new Date();
     let filtered = [];
-
+  
     if (selectedRange === 'custom' && startDate && endDate) {
       filtered = sensorData.filter(
         (item) => item.timestamp >= startDate && item.timestamp <= endDate
@@ -84,11 +169,24 @@ const DataScreen = () => {
       filtered = sensorData.filter((item) => item.timestamp >= cutoff);
     } else if (selectedRange === '30d') {
       const cutoff = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      filtered = sensorData.filter((item) => item.timestamp >= cutoff);
+      const last30Days = sensorData.filter((item) => item.timestamp >= cutoff);
+  
+      // Aggregate temperature and pressure per day
+      const tempData = aggregatePerDay(last30Days, 'temperature');
+      const presData = aggregatePerDay(last30Days, 'pressure');
+  
+      // Merge temp and pressure into same array
+      filtered = tempData.map((t, i) => ({
+        timestamp: t.timestamp,
+        temperature: t.temperature,
+        pressure: presData[i]?.pressure ?? null,
+        label: t.timestamp.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      }));
     }
-
+  
     setFilteredData(filtered);
   }, [selectedRange, sensorData, startDate, endDate]);
+  
 
   useEffect(() => {
     if (!filteredData || filteredData.length === 0) {
@@ -113,13 +211,17 @@ const DataScreen = () => {
 
   const toChartData = (key, unit = '') => {
     if (!filteredData || filteredData.length === 0) return [];
-    return [...filteredData].reverse().map((item) => ({
-      value: item[key] !== undefined ? parseFloat(item[key].toFixed(2)) : 0,
-      label: item.label ?? '',
-      dataPointText: `${item[key] !== undefined ? item[key].toFixed(2) : 0}${unit}`,
-    }));
+  
+    return filteredData
+      .filter((item) => item[key] !== null && item[key] !== undefined)
+      .reverse()
+      .map((item) => ({
+        value: item[key],
+        label: item.label ?? '',
+        dataPointText: `${item[key]}${unit}`,
+      }));
   };
-
+  
   const handlePointPress = (item, title) => {
     setSelectedData({ ...item, title });
     setModalVisible(true);
