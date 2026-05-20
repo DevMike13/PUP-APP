@@ -457,42 +457,85 @@ const DataScreen = () => {
 
     let points = [];
 
+    // =========================
     // CUSTOM RANGE
+    // =========================
     if (selectedRange === 'custom' && startDate && endDate) {
       const diffDays =
         (endDate - startDate) / (1000 * 60 * 60 * 24);
 
+      // -------------------------
+      // 0–2 DAYS → hourly
+      // -------------------------
       if (diffDays <= 2) {
         const hours = Math.ceil(diffDays * 24);
 
+        const usedTimestamps = new Set();
+
         for (let i = hours; i >= 0; i--) {
           const target = new Date(endDate - i * 3600000);
+
           const nearest = getNearest(sensorData, target);
-          if (nearest)
+
+          if (
+            nearest &&
+            !usedTimestamps.has(nearest.timestamp.getTime())
+          ) {
+            usedTimestamps.add(nearest.timestamp.getTime());
+
             points.push({
               ...nearest,
-              label: formatSmartLabel(nearest.timestamp, '1-hour interval'),
+              label: formatSmartLabel(
+                nearest.timestamp,
+                '1-hour interval'
+              ),
             });
+          }
         }
 
         setDataResolution('1-hour interval');
-      } else if (diffDays <= 7) {
+      }
+
+      // -------------------------
+      // 3–7 DAYS → every 12h
+      // -------------------------
+      else if (diffDays <= 7) {
         const steps = Math.ceil(diffDays * 2);
+
+        const usedTimestamps = new Set();
 
         for (let i = steps; i >= 0; i--) {
           const target = new Date(endDate - i * 43200000);
+
           const nearest = getNearest(sensorData, target);
-          if (nearest)
+
+          if (
+            nearest &&
+            !usedTimestamps.has(nearest.timestamp.getTime())
+          ) {
+            usedTimestamps.add(nearest.timestamp.getTime());
+
             points.push({
               ...nearest,
-              label: formatSmartLabel(nearest.timestamp, '12-hour interval'),
+              label: formatSmartLabel(
+                nearest.timestamp,
+                '12-hour interval'
+              ),
             });
+          }
         }
 
         setDataResolution('12-hour interval');
-      } else {
+      }
+
+      // -------------------------
+      // 8+ DAYS → daily average
+      // -------------------------
+      else {
         const range = sensorData.filter(
-          (i) => i.timestamp >= startDate && i.timestamp <= endDate
+          (i) =>
+            i.timestamp >= startDate &&
+            i.timestamp <= endDate
         );
 
         const t = aggregatePerDay(range, 'temperature');
@@ -507,43 +550,75 @@ const DataScreen = () => {
       }
     }
 
-    // 24H
+    // =========================
+    // 24 HOURS
+    // =========================
     else if (selectedRange === '24h') {
+      const usedTimestamps = new Set();
+
       for (let i = 23; i >= 0; i--) {
         const target = new Date(now - i * 3600000);
+
         const nearest = getNearest(sensorData, target);
 
-        if (nearest)
+        if (
+          nearest &&
+          !usedTimestamps.has(nearest.timestamp.getTime())
+        ) {
+          usedTimestamps.add(nearest.timestamp.getTime());
+
           points.push({
             ...nearest,
-            label: formatSmartLabel(nearest.timestamp, '1-hour interval'),
+            label: formatSmartLabel(
+              nearest.timestamp,
+              '1-hour interval'
+            ),
           });
+        }
       }
 
       setDataResolution('1-hour interval');
     }
 
-    // 7D
+    // =========================
+    // 7 DAYS
+    // =========================
     else if (selectedRange === '7d') {
+      const usedTimestamps = new Set();
+
       for (let i = 13; i >= 0; i--) {
         const target = new Date(now - i * 43200000);
+
         const nearest = getNearest(sensorData, target);
 
-        if (nearest)
+        if (
+          nearest &&
+          !usedTimestamps.has(nearest.timestamp.getTime())
+        ) {
+          usedTimestamps.add(nearest.timestamp.getTime());
+
           points.push({
             ...nearest,
-            label: formatSmartLabel(nearest.timestamp, '12-hour interval'),
+            label: formatSmartLabel(
+              nearest.timestamp,
+              '12-hour interval'
+            ),
           });
+        }
       }
 
       setDataResolution('12-hour interval');
     }
 
-    // 30D
+    // =========================
+    // 30 DAYS
+    // =========================
     else if (selectedRange === '30d') {
       const cutoff = new Date(now - 30 * 86400000);
 
-      const range = sensorData.filter((i) => i.timestamp >= cutoff);
+      const range = sensorData.filter(
+        (i) => i.timestamp >= cutoff
+      );
 
       const t = aggregatePerDay(range, 'temperature');
       const p = aggregatePerDay(range, 'pressure');
@@ -584,15 +659,23 @@ const DataScreen = () => {
   // -------------------------
   // Chart data
   // -------------------------
+  // const toChartData = (key, unit = '') =>
+  //   filteredData
+  //     .filter((i) => i[key] != null)
+  //     .reverse()
+  //     .map((i) => ({
+  //       value: i[key],
+  //       label: i.label,
+  //       dataPointText: `${i[key]}${unit}`,
+  //     }));
   const toChartData = (key, unit = '') =>
-    filteredData
-      .filter((i) => i[key] != null)
-      .reverse()
-      .map((i) => ({
-        value: i[key],
-        label: i.label,
-        dataPointText: `${i[key]}${unit}`,
-      }));
+  filteredData
+    .filter((i) => typeof i?.[key] === 'number' && !isNaN(i[key]))
+    .map((i) => ({
+      value: Number(i[key]),
+      label: i.label ?? '',
+      dataPointText: `${Number(i[key]).toFixed(2)}${unit}`,
+    }));
 
   const handlePointPress = (item, title) => {
     setSelectedData({ ...item, title });
@@ -604,46 +687,185 @@ const DataScreen = () => {
     }).start();
   };
 
-  const renderChart = (title, data, color) => (
-    <View style={styles.chartContainer} key={title}>
-      <Text style={styles.chartTitle}>{title}</Text>
-      <LineChart
-        data={data}
-        width={width * 0.9}
-        height={220}
-        color1={color}
-        curved
-        areaChart
-        startFillColor={`${color}55`}
-        endFillColor={`${color}10`}
-        startOpacity={0.8}
-        endOpacity={0.1}
-        thickness={4}
-        hideDataPoints={false}
-        pressPointEnabled
-        focusEnabled
-        dataPointsRadius={10}
-        focusedDataPointRadius={8}
-        focusedDataPointColor={color}
-        showValuesAsDataPointsText
-        textColor1="#fff"
-        textShiftY={30}
-        textShiftX={-5}
-        textFontSize={12}
-        spacing={75}
-        onPress={(item) => handlePointPress(item, title)}
-        xAxisLabelTextStyle={{
-          color: '#fff',
-          fontSize: 10,
-          textAlign: 'center',
-          fontFamily: 'Poppins-Regular',
-        }}
-        yAxisTextStyle={{ color: '#fff', fontSize: 10, fontFamily: 'Poppins-SemiBold' }}
-        noOfSections={5}
-      />
-    </View>
-  );
+  // const renderChart = (title, data, color) => (
+    
+  //   <View style={styles.chartContainer} key={title}>
+  //     <Text style={styles.chartTitle}>{title}</Text>
+  //     <LineChart
+  //       data={data}
+  //       width={width * 0.9}
+  //       height={220}
+  //       color1={color}
+  //       curved
+  //       areaChart
+  //       startFillColor={`${color}55`}
+  //       endFillColor={`${color}10`}
+  //       startOpacity={0.8}
+  //       endOpacity={0.1}
+  //       thickness={4}
+  //       hideDataPoints={false}
+  //       pressPointEnabled
+  //       focusEnabled
+  //       dataPointsRadius={10}
+  //       focusedDataPointRadius={8}
+  //       focusedDataPointColor={color}
+  //       showValuesAsDataPointsText
+  //       textColor1="#fff"
+  //       textShiftY={30}
+  //       textShiftX={-5}
+  //       textFontSize={12}
+  //       spacing={75}
+  //       onPress={(item) => handlePointPress(item, title)}
+  //       xAxisLabelTextStyle={{
+  //         color: '#fff',
+  //         fontSize: 10,
+  //         textAlign: 'center',
+  //         fontFamily: 'Poppins-Regular',
+  //       }}
+  //       yAxisTextStyle={{ color: '#fff', fontSize: 10, fontFamily: 'Poppins-SemiBold' }}
+  //       noOfSections={5}
+  //     />
+  //   </View>
+  // );
 
+  const renderChart = (title, data, color) => {
+    // Dynamic spacing
+    const spacing =
+      data.length <= 1
+        ? width * 0.8
+        : (width * 0.75) / data.length;
+    const values = data
+      .map(d => d.value)
+      .filter(v => typeof v === 'number' && !isNaN(v));
+
+    const maxValue =
+      values.length > 0 ? Math.max(...values) * 1.1 : 1;
+
+    const isLargeJump =
+      selectedRange === '30d';
+
+    return (
+      <View style={styles.chartContainer} key={title} nestedScrollEnabled={true}>
+        <Text style={styles.chartTitle}>{title}</Text>
+
+        <LineChart
+          key={`${title}-${selectedRange}`}
+          data={data}
+          width={width * 0.9}
+          height={220}
+
+          color1={color}
+          // curved
+          // areaChart
+
+          startFillColor={`${color}55`}
+          endFillColor={`${color}10`}
+          startOpacity={0.8}
+          endOpacity={0.1}
+
+          thickness={3}
+
+          spacing={spacing}
+          initialSpacing={10}
+          endSpacing={10}
+
+          animateOnDataChange={!isLargeJump}
+          animationDuration={200}
+
+          hideRules
+
+          noOfSections={5}
+
+          hideDataPoints={true}
+
+          focusEnabled
+          showDataPointOnFocus
+          showStripOnFocus
+          showTextOnFocus
+
+          hideXAxisText
+
+          focusedDataPointRadius={6}
+          focusedDataPointColor={color}
+
+          stripColor="#999"
+          stripWidth={1}
+
+          maxValue={maxValue}
+
+          xAxisLabelTextStyle={{
+            color: '#fff',
+            fontSize: 9,
+            textAlign: 'center',
+            fontFamily: 'Poppins-Regular',
+            display: 'none'
+          }}
+
+          yAxisTextStyle={{
+            color: '#fff',
+            fontSize: 10,
+            fontFamily: 'Poppins-SemiBold',
+          }}
+
+          pointerConfig={{
+            activatePointersOnLongPress: true,
+            activatePointersDelay: 50,
+
+            pointerStripHeight: 220,
+            pointerStripColor: '#999',
+            pointerStripWidth: 1,
+
+            pointerColor: color,
+            radius: 6,
+
+            autoAdjustPointerLabelPosition: true,
+
+            pointerLabelWidth: 120,
+            pointerLabelHeight: 80,
+
+            pointerLabelComponent: (items) => {
+              return (
+                <View
+                  style={{
+                    height: 70,
+                    width: 110,
+                    justifyContent: 'center',
+                    paddingHorizontal: 10,
+                    paddingVertical: 6,
+                    borderRadius: 12,
+                    backgroundColor: '#232227',
+                    borderWidth: 1,
+                    borderColor: '#444',
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: '#fff',
+                      fontSize: 14,
+                      fontFamily: 'Poppins-SemiBold',
+                    }}
+                  >
+                    {items[0]?.dataPointText}
+                  </Text>
+
+                  <Text
+                    style={{
+                      color: '#aaa',
+                      fontSize: 10,
+                      marginTop: 4,
+                      fontFamily: 'Poppins-Regular',
+                    }}
+                  >
+                    {items[0]?.label}
+                  </Text>
+                </View>
+              );
+            },
+          }}
+        />
+      </View>
+    );
+  };
   const ranges = [
     { label: '1D', value: '24h' },
     { label: '1W', value: '7d' },
@@ -664,7 +886,7 @@ const DataScreen = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView nestedScrollEnabled={true} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollContent}>
         <Text style={styles.title}>Temperature & Pressure/Biogas History</Text>
 
         {/* Date Range Buttons */}
