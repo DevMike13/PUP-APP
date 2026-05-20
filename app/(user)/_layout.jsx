@@ -233,7 +233,29 @@ export default function AdminTabsLayout() {
           }}
         />
 
-
+        <Tabs.Screen
+          name="(tabs)/manual"
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <View
+                style={{
+                  backgroundColor: focused ? '#007AFF' : 'transparent',
+                  width: 80,
+                  height: 60,
+                  borderRadius: 30,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Ionicons
+                  name={focused ? 'book' : 'book-outline'}
+                  size={30}
+                  color={focused ? '#fff' : '#999'}
+                />
+              </View>
+            ),
+          }}
+        />
       </Tabs>
     {showDropdown && (
     <View style={styles.dropdownOverlay}>

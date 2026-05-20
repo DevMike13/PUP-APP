@@ -287,14 +287,12 @@ const ThresholdScreen = () => {
                   <View style={styles.sensorReadingCard}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
                       <View style={{ padding: 7, borderRadius: 100, backgroundColor: "#ffffff2e", alignSelf: "flex-start" }}>
-                        {gasStatus === 'Gas is Forming' && (
-                          <MaterialCommunityIcons name="cog-sync" size={20} color="#fff" />
-                        )}
-                        {gasStatus === 'Gas Detected' && (
-                          <MaterialCommunityIcons name="check-decagram" size={20} color="#fff" />
-                        )}
-                        {!gasStatus && (
+                        {gasStatus === null ? (
                           <MaterialCommunityIcons name="timer-sand" size={20} color="#fff" />
+                        ) : gasStatus === 'Biogas Detected' ? (
+                          <MaterialCommunityIcons name="check-decagram" size={20} color="#fff" />
+                        ) : (
+                          <MaterialCommunityIcons name="close-circle-outline" size={20} color="#fff" />
                         )}
                       </View>
                       <View style={[
@@ -306,13 +304,9 @@ const ThresholdScreen = () => {
                           },
                           {
                             backgroundColor:
-                            gasStatus === null
-                              ? "#ffffff2e"
-                              : gasStatus === 'Gas is Forming'
-                              ? "#ffa64d30"     // Orange
-                              : gasStatus === 'Gas Detected'
-                              ? "#4dff4d30"     // Green
-                              : "#ffffff2e",
+                              gasStatus === 'Biogas Detected'
+                                ? "#4dff4d30"
+                                : "#ffffff2e",
                           }
                         ]}
                       >
@@ -320,19 +314,15 @@ const ThresholdScreen = () => {
                             styles.sensorStatusText,
                             {
                               color:
-                              gasStatus === 'Gas is Forming'
-                                ? 'orange'
-                                : gasStatus === 'Gas Detected'
-                                ? 'green'
-                                : 'gray',
+                                gasStatus === 'Biogas Detected'
+                                  ? 'green'
+                                  : 'gray',
                             },
                           ]}
                         >
-                          {gasStatus === 'Gas is Forming'
-                            ? 'Gas is Forming'
-                            : gasStatus === 'Gas Detected'
-                            ? 'Gas Detected'
-                            : 'Waiting for Data'}
+                          {gasStatus === 'Biogas Detected'
+                            ? 'Biogas Detected'
+                            : 'No Biogas Detected'}
                         </Text>
                       </View>
                     </View>
@@ -345,6 +335,54 @@ const ThresholdScreen = () => {
                   </View>
                 </View>
               </View>
+              
+              {/* ADDED */}
+              <View style={[styles.fullWidthCardContainer, { marginTop: 10 }]}>
+                <View>
+                  <View style={styles.sensorReadingCard}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
+                      <View style={{ padding: 7, borderRadius: 100, backgroundColor: "#ffffff2e" }}>
+                        {pressure === 100 ? (
+                          <MaterialCommunityIcons name="gas-cylinder" size={20} color="#fff" />
+                        ) : (
+                          <MaterialCommunityIcons name="progress-clock" size={20} color="#fff" />
+                        )}
+                      </View>
+                      {/* STATUS BADGE */}
+                      <View style={{
+                        padding: 7,
+                        borderRadius: 100,
+                        backgroundColor: "#ffffff2e"
+                      }}>
+                        <Text style={[
+                          styles.sensorStatusText,
+                          { paddingTop: 3, color: 'gray' }
+                        ]}>
+                          Available Gas
+                        </Text>
+                      </View>
+                    </View>
+                    <View>
+                      <Text numberOfLines={1} adjustsFontSizeToFit style={styles.sensorValueText}>
+                        {pressure !== null ? `${pressure}%` : '...'}
+                      </Text>
+                      <Text style={{
+                        color: "#fff",
+                        fontFamily: 'Poppins-Light',
+                        textAlign: 'center',
+                        marginTop: -10
+                      }}>
+                        {pressure === null
+                          ? 'Checking Status...'
+                          : pressure === 100
+                          ? 'Biogas available for harvesting'
+                          : 'Not Ready for Harvest'}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+              
             </View>
           </View>
         </View>
@@ -577,7 +615,7 @@ const styles = StyleSheet.create({
 
   scrollContent: {
     padding: 5,
-    paddingBottom: 50,
+    paddingBottom: 60,
     flexGrow: 1
   },
   contentContainer: {
